@@ -1,0 +1,310 @@
+<html>
+    <head>
+        <title>drawarmorstand()</title>
+        <style>
+            body {
+                margin: 0;
+            }
+
+            canvas {
+                width: 100%;
+                height: 100%
+            }
+        </style>
+    </head>
+    <body>
+        <div id="container" onmousewheel="chyxwheel(event);return false"></div>
+        <script src="js/three.js"></script>
+        <script>
+//document.getElementById("container").onmousewheel=(()=>false)
+            var scene = new THREE.Scene();
+            var camera = new THREE.PerspectiveCamera(75,window.innerWidth / window.innerHeight,0.1,1000);
+
+            var renderer = new THREE.WebGLRenderer({
+                alpha: true
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('container').appendChild(renderer.domElement);
+
+            window.addEventListener('resize', onWindowResize, false);
+
+            function onWindowResize() {
+
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                requestAnimationFrame(ren1der);
+            }
+
+            object3 = new THREE.AxisHelper(50);
+            object3.position.set(0, 0, 0);
+            scene.add(object3);
+
+            var head_group = new THREE.Group();
+            head_group.rotation.order = "ZYX";
+            head_group.position.y = 22;
+
+            var head_1 = new THREE.Mesh(new THREE.BoxGeometry(2,7,2),new THREE.MeshLambertMaterial({
+                color: 0xbb8c44
+            }));
+            head_1.position.y = 3.5;
+            head_group.add(head_1);
+
+            head_group.add(new THREE.ArrowHelper(new THREE.Vector3(0,0,1),new THREE.Vector3(0,7,0),5,0x0000ff,.8,.3));
+
+            scene.add(head_group);
+
+            var Lleg_group = new THREE.Group();
+            Lleg_group.rotation.order = "ZYX";
+            Lleg_group.position.set(2, 11, 0);
+
+            var Lleg_1 = new THREE.Mesh(new THREE.BoxGeometry(2,11,2),new THREE.MeshLambertMaterial({
+                color: 0xbb8c44
+            }));
+            Lleg_1.position.y = -5.5;
+            Lleg_group.add(Lleg_1);
+
+            Lleg_group.add(new THREE.ArrowHelper(new THREE.Vector3(0,0,1),new THREE.Vector3(0,-11,0),5,0x0000ff,.8,.3));
+
+            scene.add(Lleg_group);
+
+            var Rleg_group = new THREE.Group();
+            Rleg_group.rotation.order = "ZYX";
+            Rleg_group.position.set(-2, 11, 0);
+
+            var Rleg_1 = new THREE.Mesh(new THREE.BoxGeometry(2,11,2),new THREE.MeshLambertMaterial({
+                color: 0xbb8c44
+            }));
+            Rleg_1.position.y = -5.5;
+            Rleg_group.add(Rleg_1);
+
+            Rleg_group.add(new THREE.ArrowHelper(new THREE.Vector3(0,0,1),new THREE.Vector3(0,-11,0),5,0x0000ff,.8,.3));
+
+            scene.add(Rleg_group);
+
+            var Larm_group = new THREE.Group();
+            Larm_group.rotation.order = "ZYX";
+            Larm_group.position.set(5, 21, 0);
+
+            var Larm_1 = new THREE.Mesh(new THREE.BoxGeometry(2,12,2),new THREE.MeshLambertMaterial({
+                color: 0xbb8c44
+            }));
+            Larm_1.position.y = -4;
+            Larm_1.position.x = 1;
+            Larm_group.add(Larm_1);
+
+            Larm_group.add(new THREE.ArrowHelper(new THREE.Vector3(0,0,1),new THREE.Vector3(0,-10,0),5,0x0000ff,.8,.3));
+
+            scene.add(Larm_group);
+
+            var Rarm_group = new THREE.Group();
+            Rarm_group.rotation.order = "ZYX";
+            Rarm_group.position.set(-5, 21, 0);
+
+            var Rarm_1 = new THREE.Mesh(new THREE.BoxGeometry(2,12,2),new THREE.MeshLambertMaterial({
+                color: 0xbb8c44
+            }));
+            Rarm_1.position.y = -4;
+            Rarm_1.position.x = -1;
+            Rarm_group.add(Rarm_1);
+
+            Rarm_group.add(new THREE.ArrowHelper(new THREE.Vector3(0,0,1),new THREE.Vector3(0,-10,0),5,0x0000ff,.8,.3));
+
+            scene.add(Rarm_group);
+
+            var body_group = new THREE.Group();
+            body_group.rotation.order = "ZYX";
+            body_group.position.y = 23;
+
+            var body_1 = new THREE.Mesh(new THREE.BoxGeometry(8,2,2),new THREE.MeshLambertMaterial({
+                color: 0xbb8c44
+            }));
+            body_1.position.y = -11;
+            body_group.add(body_1);
+
+            var body_2 = new THREE.Mesh(new THREE.BoxGeometry(2,7,2),new THREE.MeshLambertMaterial({
+                color: 0xbb8c44
+            }));
+            body_2.position.y = -6.5;
+            body_2.position.x = 2;
+            body_group.add(body_2);
+
+            var body_3 = new THREE.Mesh(new THREE.BoxGeometry(2,7,2),new THREE.MeshLambertMaterial({
+                color: 0xbb8c44
+            }));
+            body_3.position.y = -6.5;
+            body_3.position.x = -2;
+            body_group.add(body_3);
+
+            var body_4 = new THREE.Mesh(new THREE.BoxGeometry(12,3,3),new THREE.MeshLambertMaterial({
+                color: 0xbb8c44
+            }));
+            body_4.position.y = -1.5;
+            body_group.add(body_4);
+
+            body_group.add(new THREE.ArrowHelper(new THREE.Vector3(0,0,1),new THREE.Vector3(0,-3,0),5,0x0000ff,.8,.3));
+
+            scene.add(body_group);
+
+            for (gro = 0; gro < 6; gro++) {
+                [head_group, body_group, Larm_group, Rarm_group, Lleg_group, Rleg_group][gro].position.y -= 14.5
+            }
+
+            scene.add(new THREE.AmbientLight(0x999999));
+
+            
+
+            
+
+            var chyxdis = 50;
+
+            camera.position.z = chyxdis*0.5773502691896258;
+            camera.position.y = chyxdis*0.5773502691896258;
+            camera.position.x = chyxdis*0.5773502691896258;
+			light = new THREE.DirectionalLight();
+			light.position.set(camera.position.x+camera.position.z,camera.position.y,camera.position.z-camera.position.x)
+			scene.add(light);
+            camera.lookAt({
+                x: 0,
+                y: 0,
+                z: 0
+            });
+
+            var targetRotationX = 0.7853981633974483;
+            var targetRotationOnMouseDownX = 0;
+            var targetRotationY = 0.6154797086703875;
+            var targetRotationOnMouseDownY = 0;
+
+            document.getElementById('container').addEventListener('mousedown', onDocumentMouseDown, false);
+
+            function onDocumentMouseDown(event) {
+                event.preventDefault();
+                document.getElementById('container').addEventListener('mousemove', onDocumentMouseMove, false);
+                document.getElementById('container').addEventListener('mouseup', onDocumentMouseUp, false);
+                document.getElementById('container').addEventListener('mouseout', onDocumentMouseOut, false);
+                mouseXOnMouseDown = event.clientX;
+                targetRotationOnMouseDownX = targetRotationX;
+                mouseYOnMouseDown = event.clientY;
+                targetRotationOnMouseDownY = targetRotationY;
+
+            }
+
+            function onDocumentMouseMove(event) {
+                mouseX = event.clientX;
+                targetRotationX = targetRotationOnMouseDownX + (mouseX - mouseXOnMouseDown) * 0.002;
+                mouseY = event.clientY;
+                targetRotationY = targetRotationOnMouseDownY + (mouseY - mouseYOnMouseDown) * 0.002;
+
+                targetRotationY = Math.max(targetRotationY, -Math.PI / 2);
+                targetRotationY = Math.min(targetRotationY, +Math.PI / 2);
+
+                camera.position.x = chyxdis * Math.cos(targetRotationX) * Math.cos(targetRotationY);
+                camera.position.z = chyxdis * Math.sin(targetRotationX) * Math.cos(targetRotationY);
+                camera.position.y = chyxdis * Math.sin(targetRotationY);
+				light.position.set(camera.position.x+camera.position.z,camera.position.y,camera.position.z-camera.position.x)
+                camera.lookAt({
+                    x: 0,
+                    y: 0,
+                    z: 0
+                });
+                requestAnimationFrame(ren1der);
+
+            }
+
+            function onDocumentMouseUp(event) {
+                document.getElementById('container').removeEventListener('mousemove', onDocumentMouseMove, false);
+                document.getElementById('container').removeEventListener('mouseup', onDocumentMouseUp, false);
+                document.getElementById('container').removeEventListener('mouseout', onDocumentMouseOut, false);
+            }
+            function onDocumentMouseOut(event) {
+                document.getElementById('container').removeEventListener('mousemove', onDocumentMouseMove, false);
+                document.getElementById('container').removeEventListener('mouseup', onDocumentMouseUp, false);
+                document.getElementById('container').removeEventListener('mouseout', onDocumentMouseOut, false);
+            }
+
+            document.getElementById('container').addEventListener('touchstart', onDocumentTouchStart, false);
+            document.getElementById('container').addEventListener('touchmove', onDocumentTouchMove, false);
+
+            function chyxwheel(event) {
+                chyxdis += event.wheelDelta / 24;
+                chyxdis = Math.max(chyxdis, 10);
+                chyxdis = Math.min(chyxdis, 100);
+                camera.position.x = chyxdis * Math.cos(targetRotationX) * Math.cos(targetRotationY);
+                camera.position.z = chyxdis * Math.sin(targetRotationX) * Math.cos(targetRotationY);
+                camera.position.y = chyxdis * Math.sin(targetRotationY);
+				light.position.set(camera.position.x+camera.position.z,camera.position.y,camera.position.z-camera.position.x)
+                requestAnimationFrame(ren1der);
+                
+            }
+            function onDocumentTouchStart(event) {
+                event.preventDefault();
+                if (event.touches.length == 1) {
+                    mouseXOnMouseDown = event.touches[0].pageX;
+                    targetRotationOnMouseDownX = targetRotationX;
+                    mouseYOnMouseDown = event.touches[0].pageY;
+                    targetRotationOnMouseDownY = targetRotationY;
+                }
+                if (event.touches.length == 2) {
+                    touchX1a = event.touches[0].pageX;
+                    touchX2a = event.touches[1].pageX;
+                    touchY1a = event.touches[0].pageY;
+                    touchY2a = event.touches[1].pageY;
+                    chyxdisa = chyxdis;
+                }
+            }
+            function onDocumentTouchMove(event) {
+                event.preventDefault();
+                if (event.touches.length == 2) {
+                    touchX1 = event.touches[0].pageX;
+                    touchX2 = event.touches[1].pageX;
+                    touchY1 = event.touches[0].pageY;
+                    touchY2 = event.touches[1].pageY;
+                    chyxdis = chyxdisa + 0.1 * Math.sqrt((touchX1a - touchX2a) * (touchX1a - touchX2a) + (touchY1a - touchY2a) * (touchY1a - touchY2a)) - 0.1 * Math.sqrt((touchX1 - touchX2) * (touchX1 - touchX2) + (touchY1 - touchY2) * (touchY1 - touchY2));
+                    chyxdis = Math.max(chyxdis, 10);
+                    chyxdis = Math.min(chyxdis, 100);
+                    camera.position.x = chyxdis * Math.cos(targetRotationX) * Math.cos(targetRotationY);
+                    camera.position.z = chyxdis * Math.sin(targetRotationX) * Math.cos(targetRotationY);
+                    camera.position.y = chyxdis * Math.sin(targetRotationY);
+					light.position.set(camera.position.x+camera.position.z,camera.position.y,camera.position.z-camera.position.x)
+                }
+                if (event.touches.length == 1) {
+                    mouseX = event.touches[0].pageX;
+                    targetRotationX = targetRotationOnMouseDownX + (mouseX - mouseXOnMouseDown) * 0.002;
+
+                    mouseY = event.touches[0].pageY;
+                    targetRotationY = targetRotationOnMouseDownY + (mouseY - mouseYOnMouseDown) * 0.002;
+
+                    targetRotationY = Math.max(targetRotationY, -Math.PI / 2);
+                    targetRotationY = Math.min(targetRotationY, +Math.PI / 2);
+
+                    camera.position.x = chyxdis * Math.cos(targetRotationX) * Math.cos(targetRotationY);
+                    camera.position.z = chyxdis * Math.sin(targetRotationX) * Math.cos(targetRotationY);
+                    camera.position.y = chyxdis * Math.sin(targetRotationY);
+					light.position.set(camera.position.x+camera.position.z,camera.position.y,camera.position.z-camera.position.x)
+                    camera.lookAt({
+                        x: 0,
+                        y: 0,
+                        z: 0
+                    });
+                }
+                requestAnimationFrame(ren1der);
+            }
+
+            var ren1der = function() {
+
+                renderer.render(scene, camera);
+
+            };
+
+            ren1der();
+
+            drawarmorstand = function(a, b, c, d) {
+                d = [head_group, body_group, Larm_group, Rarm_group, Lleg_group, Rleg_group][d]
+                d.rotation.x = a/180*Math.PI;
+                d.rotation.y = -b/180*Math.PI;
+                d.rotation.z = -c/180*Math.PI;
+                requestAnimationFrame(ren1der);
+            }
+        </script>
+    </body>
+</html>
