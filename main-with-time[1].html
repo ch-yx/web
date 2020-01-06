@@ -1,0 +1,387 @@
+<html>
+    <head>
+    
+            <style type="text/css">
+*:focus {
+    outline: none;
+}
+			button {
+  			  font-family:"Arial", "Tahoma", "微软雅黑", "雅黑";
+  			  border:0px;
+  			  vertical-align:middle;
+  			  margin:8px;
+			  background-color: #ccc
+  			  font-size:12px;
+			}
+			button {cursor: pointer;height:30px;transition:all .3s ease-out 0s;}
+			button:hover {background-color: #000;color:#fff;border-radius:6px;}
+
+
+			#play:hover {
+			  background-color: #0f4;color:#666;
+			  border-radius:10px;
+			}
+        </style>
+    
+    
+    
+    
+    
+    
+    
+        <script src="js/three.js"></script>
+        <script type="text/javascript">
+            
+
+	time_list=[["key frame",{"Pose":{"Head":[0,0,0],"Body":[0,0,0],"LeftArm":[0,0,0],"RightArm":[0,0,0],"LeftLeg":[0,0,0],"RightLeg":[0,0,0]}},"clone"]];/*每个帧的信息*/
+
+	time_offest=0;/*时间轴的偏差（因为滚动条）*/
+	x_d=32;/*帧的宽度*/
+	sele=0;
+	visi=0;
+	offest=function(t){
+		time_offest=t.value;
+		draw();
+	}
+prekey=function(i){
+for (;time_list[i]==undefined;i--){if (i<0){return undefined}};
+return i
+
+}
+nexkey=function(i){
+for (;time_list[i]==undefined;i++){if (i>time_list.length){return undefined}};
+return i
+
+}
+
+
+	draw=function (){
+		canvas = document.getElementById('shijianzhou');
+		if (canvas.getContext){
+			ctx = canvas.getContext('2d');
+
+
+
+
+			H=canvas.height;W=canvas.width;
+			ctx.clearRect(0, 0, W, H);//清空
+			ctx.fillStyle = '#ECEDDB'; 
+			ctx.fillRect(0, 0, W,H/2);//画上上半截的背景
+
+
+
+
+			for (i=Math.floor(+time_offest);i<=Math.floor(+time_offest+W/x_d);i+=1){//要被显示的帧
+				ctx.strokeStyle='#000000'
+				ctx.strokeRect((i-time_offest)*x_d, 0, x_d, H/2); //先画格子
+				
+				ctx.fillStyle = '#000000';ctx.font = "32px serif";
+				if(i%5==4 |i==0){ctx.fillText(i+1, (i-time_offest)*x_d, H/2,4*x_d)};//每5个表一下数
+			
+				if(time_list[i]==undefined){//普通帧的颜色
+					ctx.fillStyle = i%5==4?'#ECEDDB':"#EEEEEE"; 
+					ctx.strokeStyle='#ECEDDB'
+					ctx.fillRect((i-time_offest)*x_d, H/2, x_d, H/2);
+					ctx.strokeRect((i-time_offest)*x_d, H/2, x_d, H/2);
+					if(nexkey(i)!=undefined){
+					ctx.fillStyle = time_list[prekey(i)][2]=="clone"?'#000000':"#00FF00"; 
+					ctx.fillRect((i-time_offest-.5)*x_d, H-x_d*2/3, 1.5*x_d, x_d*1/3);
+					}
+				}
+				else if(time_list[i][0]=="key frame"){//关键帧
+					ctx.fillStyle = '#CDCDCD'; 
+					
+					ctx.fillRect((i-time_offest)*x_d, H/2, x_d, H/2);
+					ctx.fillStyle = time_list[i][2]=="clone"?'#000000':"#00FF00"; 
+					ctx.beginPath();
+					ctx.arc((i-time_offest+.5)*x_d, H-x_d/2, x_d/3, 0, Math.PI*2, 1);
+					ctx.fill();
+				}	
+				
+				
+
+
+				
+				
+			}
+ctx.strokeStyle='#FF0000'
+ctx.strokeRect((visi-time_offest)*x_d+0.3*x_d, 0, 0.4*x_d, H);
+        ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
+        ctx.fillRect ((sele-time_offest)*x_d, H/2, x_d, H/2);
+		}
+	}
+
+click=function(e){//console.log(e.target.offsetTop)
+e.preventDefault();/*console.log(e.button);console.log([2*(e.pageX)-e.target.offsetLeft,2*(e.pageY)-e.target.offsetTop])8*///2是因为模糊 用css缩小了
+var temp=Math.floor(((e.offsetX))/x_d-(-time_offest));
+if((e.offsetY)>=H/2&e.button==0){
+sele=temp;
+resh();
+}
+visi=temp;
+draw();
+draw_armorstand(get_arr(visi))
+};
+resh=function(){
+var temp_=get_arr(sele)
+for( i in temp_){
+document.getElementById("_"+["Head", "Body", "LeftArm", "RightArm", "LeftLeg", "RightLeg"][Math.floor(i/3)]+["X","Y","Z"][i%3]).value=temp_[i];
+document.getElementById(["Head", "Body", "LeftArm", "RightArm", "LeftLeg", "RightLeg"][Math.floor(i/3)]+["X","Y","Z"][i%3]).value=temp_[i]-Math.floor(temp_[i]/360)*360;
+}
+}
+addkey=function(){
+if(time_list[sele]!=undefined&&time_list[sele][0]=="key frame"){return}
+if(nexkey(sele)==undefined){time_list[sele]=[time_list[prekey(sele)][0],time_list[prekey(sele)][1],"clone"];}
+else{
+var arr=get_arr(sele);
+var outtttt={};
+for (j in ["Head", "Body", "LeftArm", "RightArm", "LeftLeg", "RightLeg"]){
+outtttt[["Head", "Body", "LeftArm", "RightArm", "LeftLeg", "RightLeg"][j]]=arr.slice(3*j,3*j+3)
+
+}
+time_list[sele]=[time_list[prekey(sele)][0],{"Pose":outtttt},time_list[prekey(sele)][2]];}
+draw();
+
+
+}
+unkey=function(){
+if(time_list[sele]== undefined){return}
+if(sele==0){alert("\u7b2c\u4e00\u5e27\u5fc5\u987b\u662f\u5173\u952e\u5e27\u0021");return}
+time_list[sele]=undefined;
+draw();
+}
+
+//------------------------------------------------------------------
+
+
+
+
+
+ function exec_iframe(num,item){
+	if(item.id[0]=="_")
+	{document.getElementById(item.id.slice(1)).value=document.getElementById(item.id).value-Math.floor(document.getElementById(item.id).value/360)*360;
+	}
+	if(item.id[0]!="_")
+	{document.getElementById("_"+item.id).value=document.getElementById(item.id).value;
+	}
+	
+	name=["Head", "Body", "LeftArm", "RightArm", "LeftLeg", "RightLeg"][num]
+if(time_list[sele]==undefined){addkey()}
+
+time_list[sele][1]={"Pose":{"Head":[+document.getElementById("_HeadX").value,+document.getElementById("_HeadY").value,+document.getElementById("_HeadZ").value],
+"Body":[+document.getElementById("_BodyX").value,+document.getElementById("_BodyY").value,+document.getElementById("_BodyZ").value],
+"LeftArm":[+document.getElementById("_LeftArmX").value,+document.getElementById("_LeftArmY").value,+document.getElementById("_LeftArmZ").value],
+"RightArm":[+document.getElementById("_RightArmX").value,+document.getElementById("_RightArmY").value,+document.getElementById("_RightArmZ").value],
+"LeftLeg":[+document.getElementById("_LeftLegX").value,+document.getElementById("_LeftLegY").value,+document.getElementById("_LeftLegZ").value],
+"RightLeg":[+document.getElementById("_RightLegX").value,+document.getElementById("_RightLegY").value,+document.getElementById("_RightLegZ").value]}}
+draw_armorstand(get_arr(visi))
+}
+
+
+
+
+            matrix_rotate_x = function(theta) {
+                return new THREE.Matrix3().set(1, 0, 0, 0, Math.cos(theta), -Math.sin(theta), 0, Math.sin(theta), Math.cos(theta))
+            }
+            matrix_rotate_y = function(theta) {
+                return new THREE.Matrix3().set(Math.cos(theta), 0, -Math.sin(theta), 0, 1, 0, Math.sin(theta), 0, Math.cos(theta))
+            }
+            matrix_rotate_z = function(theta) {
+                return new THREE.Matrix3().set(Math.cos(theta), Math.sin(theta), 0, -Math.sin(theta), Math.cos(theta), 0, 0, 0, 1)
+            }
+calculate_armorstand_rotation=function(R){
+var ele=R.elements;
+var sy=Math.sqrt(ele[0]*ele[0]+ele[1]*ele[1])
+if (sy>0.000001)
+{x=Math.atan2(ele[5],ele[8]);
+y=Math.atan2(-ele[2],sy);
+z=Math.atan2(ele[1],ele[0]);
+}
+if (sy<=0.000001)
+{x=Math.atan2(-ele[7],ele[4]);
+y=Math.atan2(-ele[2],sy);
+z=0;
+}
+return [x*180/Math.PI,-y*180/Math.PI,-z*180/Math.PI]
+}
+			
+			
+            Msum = function(a, b) {
+                var e1 = a.elements;
+                e2 = b.elements;
+                return (new THREE.Matrix3().set(e1[0] + e2[0], e1[3] + e2[3], e1[6] + e2[6], e1[1] + e2[1], e1[4] + e2[4], e1[7] + e2[7], e1[2] + e2[2], e1[5] + e2[5], e1[8] + e2[8]));
+            }
+
+            R = function(n, th) {
+   
+                var nx = n["x"];
+                var ny = n["y"];
+                var nz = n["z"];
+                if(isNaN(nx)|isNaN(ny)|isNaN(nz)|th==0){return new THREE.Matrix3();}
+                var N = new THREE.Matrix3().set(0, -nz, ny, nz, 0, -nx, -ny, nx, 0)
+                var x1 = new THREE.Matrix3();
+                var x2 = N.clone().multiplyScalar(Math.sin(th));
+                var x3 = N.clone().multiply(N.clone()).multiplyScalar(1 - Math.cos(th));
+                return Msum(Msum(x1, x2), x3)
+            }
+
+            main = function(c, b, a, f, e, d, t, quanshu1, quanshu2) {
+                a = Math.PI * a / 180;
+                b = Math.PI * b / 180;
+                c = Math.PI * c / 180;
+                d = Math.PI * d / 180;
+                e = Math.PI * e / 180;
+                f = Math.PI * f / 180;
+                start = new THREE.Matrix3().multiply(matrix_rotate_z(a)).multiply(matrix_rotate_y(b)).multiply(matrix_rotate_x(c));
+                end = new THREE.Matrix3().multiply(matrix_rotate_z(d)).multiply(matrix_rotate_y(e)).multiply(matrix_rotate_x(f));
+                n = new THREE.Vector3().crossVectors(new THREE.Vector3(0,1,0).applyMatrix3(start), new THREE.Vector3(0,1,0).applyMatrix3(end));
+                n.normalize();
+                th = new THREE.Vector3(0,1,0).applyMatrix3(start).angleTo(new THREE.Vector3(0,1,0).applyMatrix3(end));
+
+                var ele = (R(n, (th + 2 * quanshu1 * Math.PI)).multiply(start)).transpose().multiply(end).elements;
+                th2 = -Math.atan2(ele[2], ele[0]);
+				return calculate_armorstand_rotation((R(n,(th+2*quanshu1*Math.PI)*t).multiply(start)).multiply(matrix_rotate_y(-(th2+2*quanshu2*Math.PI)*t)))
+            }
+  
+  
+get_arr=function(i){
+  if(nexkey(i)==undefined){return get_arr(prekey(i))}
+if(time_list[i]!=undefined&&time_list[i][0]=="key frame"){return [].concat(time_list[i][1]["Pose"]["Head"],time_list[i][1]["Pose"]["Body"],time_list[i][1]["Pose"]["LeftArm"],time_list[i][1]["Pose"]["RightArm"],time_list[i][1]["Pose"]["LeftLeg"],time_list[i][1]["Pose"]["RightLeg"])}
+else if(time_list[prekey(i)][2]=="interpolation"){
+var name=["Head", "Body", "LeftArm", "RightArm", "LeftLeg", "RightLeg"];
+
+var start=time_list[prekey(i)][1]["Pose"];
+var end=time_list[nexkey(i)][1]["Pose"];
+var ret=[]
+for (j in name) {
+ret=ret.concat(main(...start[name[j]],...end[name[j]],(i-prekey(i))/(nexkey(i)-prekey(i)),0,0))
+
+}
+return ret
+}else{return get_arr(prekey(i))}
+
+}
+
+
+
+draw_armorstand=function(i){
+for (k =0;k<6;k++){
+window.myframe.drawarmorstand(i[3*k],i[3*k+1],i[3*k+2],k);
+}
+}
+play=function(){
+if(visi!=prekey(time_list.length)){
+
+setTimeout("play()",50)}
+draw_armorstand(get_arr(visi))
+var arr=get_arr(visi);
+var outtttt={};
+for (j in ["Head", "Body", "LeftArm", "RightArm", "LeftLeg", "RightLeg"]){
+outtttt[["Head", "Body", "LeftArm", "RightArm", "LeftLeg", "RightLeg"][j]]=[arr[3*j]+"f",arr[3*j+1]+"f",arr[3*j+2]+"f"]
+
+}
+//console.log(visi,JSON.stringify({"Pose":outtttt}).split('"').join(""));
+document.getElementById("output").innerHTML+=("<br>"+(visi+1)+"    "+JSON.stringify({"Pose":outtttt}).split('"').join(""));
+draw();
+if(visi!=prekey(time_list.length)){
+visi+=1;}
+
+
+}
+/*
+window.onresize=function(){  
+                 document.getElementById('shijianzhou').width=document.documentElement.clientWidth*2-40;
+           draw() }  
+*/
+        
+        </script>
+        <style type="text/css">
+            canvas{
+                border: 0px solid black;
+               /* zoom:0.5;*/
+               transform:scale(0.5);
+               transform-origin:0px 0px;    display: flex;
+               }
+        </style>
+    </head>
+    <body onload="draw();document.getElementById('shijianzhou').onmousedown=click; ">
+                    <canvas id="shijianzhou" width="3000" height="100" oncontextmenu=self.event.returnValue=false></canvas>
+
+	<table border="0">
+
+            <tr>
+                <td colspan="3">
+                    <input style="width:1000px;" type="range" id="time" min="0" max="100" value="0" step="any" oninput="offest(this)" onchange="offest(this)">
+                </td>
+                <td onclick='document.getElementById("time").max=10+ +document.getElementById("time").max'>&#10145;</td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <button onclick='addkey();resh();draw_armorstand(get_arr(visi))'>&#25554;&#20837;&#20851;&#38190;&#24103;</button>
+
+                    <button onclick='unkey();resh();draw_armorstand(get_arr(visi))'>&#28165;&#38500;&#20851;&#38190;&#24103;</button>
+
+                    <button onclick='time_list[prekey(sele)][2]="interpolation";draw();resh();draw_armorstand(get_arr(visi))'>&#25554;&#20540;</button>
+
+                    <button onclick='time_list[prekey(sele)][2]="clone";draw();resh();draw_armorstand(get_arr(visi))'>&#19981;&#25554;&#20540;</button>
+                </td>
+            </tr>
+            <tr>
+                <td><p>Head</p><p>Body</p><p>LeftArm</p><p>RightArm</p><p>LeftLeg</p><p>RightLeg</p></td>
+                <td >
+                    
+                    <p>
+                        <input type="range" id="HeadX" min="0" max="360" value="0" oninput="exec_iframe(0,this)" onchange="exec_iframe(0,this)">
+                        <input type="number" style="width:40px;" id="_HeadX" value="0" oninput="exec_iframe(0,this)" onchange="exec_iframe(0,this)">
+                        <input type="range" id="HeadY" min="0" max="360" value="0" oninput="exec_iframe(0,this)" onchange="exec_iframe(0,this)">
+                        <input type="number" style="width:40px;" id="_HeadY" value="0" oninput="exec_iframe(0,this)" onchange="exec_iframe(0,this)">
+                        <input type="range" id="HeadZ" min="0" max="360" value="0" oninput="exec_iframe(0,this)" onchange="exec_iframe(0,this)">
+                        <input type="number" style="width:40px;" id="_HeadZ" value="0" oninput="exec_iframe(0,this)" onchange="exec_iframe(0,this)">
+                    </p>
+                    <p>
+                        <input type="range" id="BodyX" min="0" max="360" value="0" oninput="exec_iframe(1,this)" onchange="exec_iframe(1,this)">
+                        <input type="number" style="width:40px;" id="_BodyX" value="0" oninput="exec_iframe(1,this)" onchange="exec_iframe(1,this)">
+                        <input type="range" id="BodyY" min="0" max="360" value="0" oninput="exec_iframe(1,this)" onchange="exec_iframe(1,this)">
+                        <input type="number" style="width:40px;" id="_BodyY" value="0" oninput="exec_iframe(1,this)" onchange="exec_iframe(1,this)">
+                        <input type="range" id="BodyZ" min="0" max="360" value="0" oninput="exec_iframe(1,this)" onchange="exec_iframe(1,this)">
+                        <input type="number" style="width:40px;" id="_BodyZ" value="0" oninput="exec_iframe(1,this)" onchange="exec_iframe(1,this)">
+                    </p>
+                    <p>
+                        <input type="range" id="LeftArmX" min="0" max="360" value="0" oninput="exec_iframe(2,this)" onchange="exec_iframe(2,this)">
+                        <input type="number" style="width:40px;" id="_LeftArmX" value="0" oninput="exec_iframe(2,this)" onchange="exec_iframe(2,this)">
+                        <input type="range" id="LeftArmY" min="0" max="360" value="0" oninput="exec_iframe(2,this)" onchange="exec_iframe(2,this)">
+                        <input type="number" style="width:40px;" id="_LeftArmY" value="0" oninput="exec_iframe(2,this)" onchange="exec_iframe(2,this)">
+                        <input type="range" id="LeftArmZ" min="0" max="360" value="0" oninput="exec_iframe(2,this)" onchange="exec_iframe(2,this)">
+                        <input type="number" style="width:40px;" id="_LeftArmZ" value="0" oninput="exec_iframe(2,this)" onchange="exec_iframe(2,this)">
+                    </p>
+                    <p>
+                        <input type="range" id="RightArmX" min="0" max="360" value="0" oninput="exec_iframe(3,this)" onchange="exec_iframe(3,this)">
+                        <input type="number" style="width:40px;" id="_RightArmX" value="0" oninput="exec_iframe(3,this)" onchange="exec_iframe(3,this)">
+                        <input type="range" id="RightArmY" min="0" max="360" value="0" oninput="exec_iframe(3,this)" onchange="exec_iframe(3,this)">
+                        <input type="number" style="width:40px;" id="_RightArmY" value="0" oninput="exec_iframe(3,this)" onchange="exec_iframe(3,this)">
+                        <input type="range" id="RightArmZ" min="0" max="360" value="0" oninput="exec_iframe(3,this)" onchange="exec_iframe(3,this)">
+                        <input type="number" style="width:40px;" id="_RightArmZ" value="0" oninput="exec_iframe(3,this)" onchange="exec_iframe(3,this)">
+                    </p>
+                    <p>
+                        <input type="range" id="LeftLegX" min="0" max="360" value="0" oninput="exec_iframe(4,this)" onchange="exec_iframe(4,this)">
+                        <input type="number" style="width:40px;" id="_LeftLegX" value="0" oninput="exec_iframe(4,this)" onchange="exec_iframe(4,this)">
+                        <input type="range" id="LeftLegY" min="0" max="360" value="0" oninput="exec_iframe(4,this)" onchange="exec_iframe(4,this)">
+                        <input type="number" style="width:40px;" id="_LeftLegY" value="0" oninput="exec_iframe(4,this)" onchange="exec_iframe(4,this)">
+                        <input type="range" id="LeftLegZ" min="0" max="360" value="0" oninput="exec_iframe(4,this)" onchange="exec_iframe(4,this)">
+                        <input type="number" style="width:40px;" id="_LeftLegZ" value="0" oninput="exec_iframe(4,this)" onchange="exec_iframe(4,this)">
+                    </p>
+                    <p>
+                        <input type="range" id="RightLegX" min="0" max="360" value="0" oninput="exec_iframe(5,this)" onchange="exec_iframe(5,this)">
+                        <input type="number" style="width:40px;" id="_RightLegX" value="0" oninput="exec_iframe(5,this)" onchange="exec_iframe(5,this)">
+                        <input type="range" id="RightLegY" min="0" max="360" value="0" oninput="exec_iframe(5,this)" onchange="exec_iframe(5,this)">
+                        <input type="number" style="width:40px;" id="_RightLegY" value="0" oninput="exec_iframe(5,this)" onchange="exec_iframe(5,this)">
+                        <input type="range" id="RightLegZ" min="0" max="360" value="0" oninput="exec_iframe(5,this)" onchange="exec_iframe(5,this)">
+                        <input type="number" style="width:40px;" id="_RightLegZ" value="0" oninput="exec_iframe(5,this)" onchange="exec_iframe(5,this)">
+                    </p>
+</td>
+<td>
+    <iframe src="lab3.html" name="myframe" width="250" height="500" scrolling = no></iframe>
+</td>
+</tr></table><button id="play" onclick='visi=0;document.getElementById("output").innerHTML="";play()'>play</button>
+<p id=output></p><a href="//space.bilibili.com/67131398">&#19981;&#20837;&#27969;&#30340;&#20316;&#32773;</a>
+</body></html>

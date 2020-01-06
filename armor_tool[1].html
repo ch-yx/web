@@ -1,0 +1,151 @@
+<html>  
+ <head>  
+<meta charset="utf-8" /> 
+  <title> main window </title>  
+  <script src="js/three.js"></script>
+  <script type="text/javascript">  
+
+  
+  
+            matrix_rotate_x = function(theta) {
+                return new THREE.Matrix3().set(1, 0, 0, 0, Math.cos(theta), -Math.sin(theta), 0, Math.sin(theta), Math.cos(theta))
+            }
+            matrix_rotate_y = function(theta) {
+                return new THREE.Matrix3().set(Math.cos(theta), 0, -Math.sin(theta), 0, 1, 0, Math.sin(theta), 0, Math.cos(theta))
+            }
+            matrix_rotate_z = function(theta) {
+                return new THREE.Matrix3().set(Math.cos(theta), Math.sin(theta), 0, -Math.sin(theta), Math.cos(theta), 0, 0, 0, 1)
+            }
+calculate_armorstand_rotation=function(R){
+var ele=R.elements;
+var sy=Math.sqrt(ele[0]*ele[0]+ele[1]*ele[1])
+if (sy>0.000001)
+{x=Math.atan2(ele[5],ele[8]);
+y=Math.atan2(-ele[2],sy);
+z=Math.atan2(ele[1],ele[0]);
+}
+if (sy<=0.000001)
+{x=Math.atan2(-ele[7],ele[4]);
+y=Math.atan2(-ele[2],sy);
+z=0;
+}
+return [x*180/Math.PI,-y*180/Math.PI,-z*180/Math.PI]
+}
+			
+  
+  
+  
+
+  function exec_iframe(num/*0:head, 1:body, 2:Larm, 3:Rarm, 4:Lleg, 5:Rleg*/,item){
+	if(item.id[0]=="_")
+	{document.getElementById(item.id.slice(1)).value=document.getElementById(item.id).value-Math.floor(document.getElementById(item.id).value/360)*360;
+	}
+	if(item.id[0]!="_")
+	{document.getElementById("_"+item.id).value=document.getElementById(item.id).value;
+	}
+	
+	name=["head", "body", "Larm", "Rarm", "Lleg", "Rleg"][num]
+	inp=[+document.getElementById("_"+name+"X").value,+document.getElementById("_"+name+"Y").value,+document.getElementById("_"+name+"Z").value]
+    inp=inp.map(function(x){return x*Math.PI/180})
+	inp=calculate_armorstand_rotation(matrix_rotate_y(inp[0]).multiply (matrix_rotate_x(inp[1])).multiply (matrix_rotate_y(inp[2])))
+document.getElementById("outt"+num).innerHTML=inp.map((e)=>(e+"f"))
+	window.myframe.drawarmorstand(...inp,num);
+
+  }  
+  </script>  
+  
+ </head>  
+  
+ <body>  <code>注意这里的滑动条/框并非是输入的NBT。第一个类似于经度，第二个相当于纬度。第三个是在球面上这一点绕自己转。<br>你应当使用的NBT会显示在最下面（就是你最近刚刚修改的身体部件的NBT）</code>
+<table border="0">
+    <tbody>
+    <tr>
+<td>  
+
+
+<p>
+
+<input type="range" id="headX" min="0" max="360" value="0" oninput="exec_iframe(0,this)" onchange="exec_iframe(0,this)">
+<input type="number" id="_headX" value="0" oninput="exec_iframe(0,this)" onchange="exec_iframe(0,this)">
+<input type="range" id="headY" min="0" max="180" value="0" oninput="exec_iframe(0,this)" onchange="exec_iframe(0,this)">
+<input type="number" id="_headY" value="0" oninput="exec_iframe(0,this)" onchange="exec_iframe(0,this)">
+<input type="range" id="headZ" min="0" max="360" value="0" oninput="exec_iframe(0,this)" onchange="exec_iframe(0,this)">
+<input type="number" id="_headZ" value="0" oninput="exec_iframe(0,this)" onchange="exec_iframe(0,this)">
+
+</p>
+
+
+<p>
+
+<input type="range" id="bodyX" min="0" max="360" value="0" oninput="exec_iframe(1,this)" onchange="exec_iframe(1,this)">
+<input type="number" id="_bodyX" value="0" oninput="exec_iframe(1,this)" onchange="exec_iframe(1,this)">
+<input type="range" id="bodyY" min="0" max="180" value="0" oninput="exec_iframe(1,this)" onchange="exec_iframe(1,this)">
+<input type="number" id="_bodyY" value="0" oninput="exec_iframe(1,this)" onchange="exec_iframe(1,this)">
+<input type="range" id="bodyZ" min="0" max="360" value="0" oninput="exec_iframe(1,this)" onchange="exec_iframe(1,this)">
+<input type="number" id="_bodyZ" value="0" oninput="exec_iframe(1,this)" onchange="exec_iframe(1,this)">
+
+</p>
+
+
+<p>
+
+<input type="range" id="LarmX" min="0" max="360" value="0" oninput="exec_iframe(2,this)" onchange="exec_iframe(2,this)">
+<input type="number" id="_LarmX" value="0" oninput="exec_iframe(2,this)" onchange="exec_iframe(2,this)">
+<input type="range" id="LarmY" min="0" max="180" value="0" oninput="exec_iframe(2,this)" onchange="exec_iframe(2,this)">
+<input type="number" id="_LarmY" value="0" oninput="exec_iframe(2,this)" onchange="exec_iframe(2,this)">
+<input type="range" id="LarmZ" min="0" max="360" value="0" oninput="exec_iframe(2,this)" onchange="exec_iframe(2,this)">
+<input type="number" id="_LarmZ" value="0" oninput="exec_iframe(2,this)" onchange="exec_iframe(2,this)">
+
+</p>
+
+
+<p>
+
+<input type="range" id="RarmX" min="0" max="360" value="0" oninput="exec_iframe(3,this)" onchange="exec_iframe(3,this)">
+<input type="number" id="_RarmX" value="0" oninput="exec_iframe(3,this)" onchange="exec_iframe(3,this)">
+<input type="range" id="RarmY" min="0" max="180" value="0" oninput="exec_iframe(3,this)" onchange="exec_iframe(3,this)">
+<input type="number" id="_RarmY" value="0" oninput="exec_iframe(3,this)" onchange="exec_iframe(3,this)">
+<input type="range" id="RarmZ" min="0" max="360" value="0" oninput="exec_iframe(3,this)" onchange="exec_iframe(3,this)">
+<input type="number" id="_RarmZ" value="0" oninput="exec_iframe(3,this)" onchange="exec_iframe(3,this)">
+
+</p>
+
+
+<p>
+
+<input type="range" id="LlegX" min="0" max="360" value="0" oninput="exec_iframe(4,this)" onchange="exec_iframe(4,this)">
+<input type="number" id="_LlegX" value="0" oninput="exec_iframe(4,this)" onchange="exec_iframe(4,this)">
+<input type="range" id="LlegY" min="0" max="180" value="0" oninput="exec_iframe(4,this)" onchange="exec_iframe(4,this)">
+<input type="number" id="_LlegY" value="0" oninput="exec_iframe(4,this)" onchange="exec_iframe(4,this)">
+<input type="range" id="LlegZ" min="0" max="360" value="0" oninput="exec_iframe(4,this)" onchange="exec_iframe(4,this)">
+<input type="number" id="_LlegZ" value="0" oninput="exec_iframe(4,this)" onchange="exec_iframe(4,this)">
+
+</p>
+<p>
+
+<input type="range" id="RlegX" min="0" max="360" value="0" oninput="exec_iframe(5,this)" onchange="exec_iframe(5,this)">
+<input type="number" id="_RlegX" value="0" oninput="exec_iframe(5,this)" onchange="exec_iframe(5,this)">
+<input type="range" id="RlegY" min="0" max="180" value="0" oninput="exec_iframe(5,this)" onchange="exec_iframe(5,this)">
+<input type="number" id="_RlegY" value="0" oninput="exec_iframe(5,this)" onchange="exec_iframe(5,this)">
+<input type="range" id="RlegZ" min="0" max="360" value="0" oninput="exec_iframe(5,this)" onchange="exec_iframe(5,this)">
+<input type="number" id="_RlegZ" value="0" oninput="exec_iframe(5,this)" onchange="exec_iframe(5,this)">
+
+</p>
+
+
+
+</td><td><iframe src="lab3.html" name="myframe" width="230" height="700"></iframe> </td>
+</tr>
+</tbody></table>
+<p onclick="window.myframe.drawarmorstand(NaN,NaN,NaN,2);window.myframe.drawarmorstand(NaN,NaN,NaN,3);">暂时隐藏胳膊</p>
+Pose:{<br>
+   Head:[<code id=outt0>0f,0f,0f</code>],<br>
+   Body:[<code id=outt1>0f,0f,0f</code>],<br>
+   LeftArm:[<code id=outt2>0f,0f,0f</code>],<br>
+   RightArm:[<code id=outt3>0f,0f,0f</code>],<br>
+   LeftLeg:[<code id=outt4>0f,0f,0f</code>],<br>
+   RightLeg:[<code id=outt5>0f,0f,0f</code>]<br>
+}
+   <a href="//space.bilibili.com/67131398">&#19981;&#20837;&#27969;&#30340;&#20316;&#32773;</a>
+ </body>  
+</html>  
